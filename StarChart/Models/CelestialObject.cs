@@ -7,14 +7,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StarChart.Models
 {
-    public class CalestialObject
+    public class CelestialObject
     {
         public int Id { get; set; }
         [Required]
         public string Nam { get; set; }
         public int? OrientedObjectId { get; set; }
         [NotMapped]
-        public List<CalestialObject> Satellites { get; set; }
+        public List<CelestialObject> Satellites { get; set; }
         public TimeSpan timeSpan { get; set; }
 
     }
