@@ -17,5 +17,71 @@ namespace StarChart.Controllers
         {
             _context = context;
         }
+
+        [HttpGet("{id:int}")]
+        [ActionName("GetById")]
+        public IActionResult GetById(int id)
+        {
+            var res = _context.CelestialObjects.FirstOrDefault(x => x.Id == id);
+
+            if (res == null) return NotFound();
+
+            var celestials = _context.CelestialObjects.Where(x => x.Id != id).ToList();
+            res.Satellites = new List<Models.CelestialObject>();
+
+            foreach (var celestial in celestials)
+            {
+                if (celestial.OrbitedObjectId == id)
+                {
+                    res.Satellites.Add(res);
+                }
+            }
+            return Ok(res);
+        }
+
+        [HttpGet("{name}")]
+        public IActionResult GetByName(string name)
+        {
+            var res = _context.CelestialObjects.Where(x => x.Name == name).ToList();
+
+            if (res.Count == 0) return NotFound();
+
+            var celestials = _context.CelestialObjects.ToList();
+            foreach(var celestial in res)
+            {
+                celestial.Satellites = new List<Models.CelestialObject>();
+                foreach (var obj in celestials)
+                {
+                    if (celestial.Id == obj.Id) continue;
+                    if (obj.OrbitedObjectId == celestial.Id)
+                    {
+                        celestial.Satellites.Add(obj);
+                    }
+                }
+            }
+
+            return Ok(res);
+        }
+
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var res = _context.CelestialObjects.ToList();
+
+            foreach (var celestial in res)
+            {
+                celestial.Satellites = new List<Models.CelestialObject>();
+                foreach (var obj in res)
+                {
+                    if (celestial.Id == obj.Id) continue;
+                    if (obj.OrbitedObjectId == celestial.Id)
+                    {
+                        celestial.Satellites.Add(obj);
+                    }
+                }
+            }
+
+            return Ok(res);
+        }
     }
 }
